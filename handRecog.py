@@ -5,26 +5,31 @@ import time
 cap = cv2.VideoCapture(0)
 
 mpHands = mp.solutions.hands
-hands = mpHands.Hands()
+hands = mpHands.Hands(min_detection_confidence=0.75)
 mpDraw = mp.solutions.drawing_utils
-
+faceDetect=mp.solutions.face_detection
+face=faceDetect.FaceDetection(0.75)
 pTime = 0
 cTime = 0
 
 while True:
     success, img = cap.read()
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    results = hands.process(imgRGB)
-    print(results.multi_hand_landmarks)
-    if results.multi_hand_landmarks:
-        for handLms in results.multi_hand_landmarks:
+    rezHand = hands.process(imgRGB)
+
+    if rezHand.multi_hand_landmarks:
+        for handLms in rezHand.multi_hand_landmarks:
             for id, lm in enumerate(handLms.landmark):
-                h, w, c = img.shape
-                cx, cy = int(lm.x * w), int(lm.y * h)
-                print(id, cx, cy)
-                # if id == 4:
-                #cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
-            mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+                mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+
+    rezFace=face.process(img)
+    if rezFace.detections:
+        for id, x in enumerate(rezFace.detections):
+            #mpDraw.draw_detection(img,x)
+            box=x.location_data.relative_bounding_box
+            h,w,c=img.shape
+            box2= int(box.xmin*w), int(box.ymin*h), int(box.width*w), int(box.height*h)
+            cv2.rectangle(img,box2, (255,0,255),2)
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)
