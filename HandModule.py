@@ -33,6 +33,12 @@ class handDetector():
                 listaLM.append([id,cx,cy])
         return listaLM
 
+    def handNum(self, img):
+        if self.rezHand.multi_hand_landmarks:
+            return len(self.rezHand.multi_hand_landmarks)
+        else:
+            return 0
+
 
 
 

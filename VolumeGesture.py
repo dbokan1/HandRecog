@@ -13,7 +13,6 @@ interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 volume = cast(interface, POINTER(IAudioEndpointVolume))
 
-print(volume.GetVolumeRange())
 
 
 def insertFrame(img1, img2, cx, cy):
@@ -48,41 +47,43 @@ i=0
 while True:
     success, img = cap.read()
     img = det.findHands(img,False)
-    lmList=det.findPosition(img)
-    if len(lmList)!=0:
-        i=i+1
-        if i==30:
-            i=0
+    for j in range(det.handNum(img)):
+        lmList=det.findPosition(img,j)
+        print(det.handNum(img))
 
-        x1,y1=lmList[4][1], lmList[4][2]
-        print(x1,y1)
-        x2, y2 = lmList[12][1], lmList[12][2]
-        x3, y3 = lmList[0][1], lmList[0][2]
-        cx,cy=(x1+x2)//2,(y1+y2)//2
-        #cv2.circle(img, (x1,y1),10,(255,0,255),cv2.FILLED)
-        #cv2.circle(img, (x2, y2), 10, (255, 0, 255), cv2.FILLED)
-        # cv2.circle(img, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
-        # cv2.line(img, (x1,y1), (x2,y2),(255,0,255),thickness=5)
+        if len(lmList)!=0:
+            i=i+1
+            if i==30:
+                i=0
 
-        c=np.sqrt((x2-x1)**2+(y2-y1)**2)
-        a = np.sqrt((x2 - x3) ** 2 + (y2 - y3) ** 2)
-        b = np.sqrt((x3 - x1) ** 2 + (y3 - y1) ** 2)
-        alfa=math.acos((a**2+b**2-c**2)/(2*a*b))
-        alfa=alfa/np.pi *180
-        slika=cv2.imread("strange2.png")
+            x1,y1=lmList[4][1], lmList[4][2]
+            x2, y2 = lmList[12][1], lmList[12][2]
+            x3, y3 = lmList[0][1], lmList[0][2]
+            cx,cy=(x1+x2)//2,(y1+y2)//2
+            #cv2.circle(img, (x1,y1),10,(255,0,255),cv2.FILLED)
+            #cv2.circle(img, (x2, y2), 10, (255, 0, 255), cv2.FILLED)
+            # cv2.circle(img, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
+            # cv2.line(img, (x1,y1), (x2,y2),(255,0,255),thickness=5)
 
-        slika=rotate_image(slika, i*12)
-        slika=cv2.resize(slika,(int(c),int(c)))
-        posx=x3-int(int(c)/3)
-        posy=y3-int(c)
-        if posy+int(c)<480 and posx+int(c)<640 and c>40 and posx>0 and posy>0:
-            img=insertFrame(img,slika,posx,posy)
+            c=np.sqrt((x2-x1)**2+(y2-y1)**2)
+            a = np.sqrt((x2 - x3) ** 2 + (y2 - y3) ** 2)
+            b = np.sqrt((x3 - x1) ** 2 + (y3 - y1) ** 2)
+            alfa=math.acos((a**2+b**2-c**2)/(2*a*b))
+            alfa=alfa/np.pi *180
+            slika=cv2.imread("src/strange2.png")
 
-        # cv2.putText(img, tekst, (cx, cy), cv2.FONT_HERSHEY_PLAIN,vel,
-        # (255, 255, 255), 2)
+            slika=rotate_image(slika, i*12)
+            slika=cv2.resize(slika,(int(a),int(a)))
+            posx=int((x2+x3)/2)-int(int(a)/2)
+            posy=int((y2+y3)/2)-int(int(a)/2)
+            if posy+int(a)<480 and posx+int(a)<640 and c>60 and posx>0 and posy>0:
+                img=insertFrame(img,slika,posx,posy)
 
-        # vol=np.interp(alfa,[1,60],[-65.25, 0.0])
-        # volume.SetMasterVolumeLevel(vol,None)
+            # cv2.putText(img, tekst, (cx, cy), cv2.FONT_HERSHEY_PLAIN,vel,
+            # (255, 255, 255), 2)
+
+            # vol=np.interp(alfa,[1,60],[-65.25, 0.0])
+            # volume.SetMasterVolumeLevel(vol,None)
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)

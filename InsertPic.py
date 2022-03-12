@@ -29,7 +29,7 @@ cap = cv2.VideoCapture(0)
 
 while True:
     success, img = cap.read()
-    slika = cv2.imread('strange2.png')
+    slika = cv2.imread('src/strange2.png')
     slika=rotate_image(slika,45)
     slika = cv2.resize(slika, (200, 200))
     rez=insertFrame(img,slika,10,10)
