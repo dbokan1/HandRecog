@@ -1,7 +1,9 @@
 from cv2 import cv2
 import numpy as np
 
-
+#################################
+# Commands for inserting png into frames with alpha and image rotation
+################################
 
 def insertFrame(img1, img2, cx, cy):
     overlay_img1 = np.ones(img1.shape, np.uint8) * 255

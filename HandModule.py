@@ -2,6 +2,9 @@ from cv2 import cv2
 import mediapipe as mp
 import time
 
+##########################
+# Module for ease of access to finger coordinates
+##########################
 
 class handDetector():
     def __init__(self, mode=False, max=2, detect=0.5, track=0.5):

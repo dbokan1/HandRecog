@@ -2,6 +2,11 @@ from cv2 import cv2
 import mediapipe as mp
 import time
 
+
+########################################
+# Basic use of mediapipe hand and face recognition
+########################################
+
 cap = cv2.VideoCapture(0)
 
 mpHands = mp.solutions.hands
